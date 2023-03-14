@@ -8,18 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace lab_2
 {
     public partial class Form1 : Form
     {
+        //объявление листа
         static List<Human> humans = new List<Human>();
 
         public Form1()
         {
             InitializeComponent();
         }
+     
 
+        //Кнопка создания объекта
         private void CreateObject_Click(object sender, EventArgs e)
         {
             string name = NewName.Text;
@@ -37,15 +41,19 @@ namespace lab_2
             }
             else
             {
-                MessageBox.Show("Введите корректные значения\nИмя, фамилия и город должны быть символами Кириллицы!");
+                Win32.MessageBox(0, "Введите корректные значения.Имя, фамилия и город должны быть символами Кириллицы!",
+                    "Ошибка!", 0);
+                
             }
         }
-
+        
+        //Кнопка закрытия проекта
         private void CloseProject_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        //Бокс вывода информации об созданном объекте
         private void ChangeComboBox1()
         {
             if (humans.Count == 0)
@@ -60,6 +68,7 @@ namespace lab_2
             }
         }
 
+        //Кнопка изменения объекта
         private void Change_Click(object sender, EventArgs e)
         {
             int selected = comboBox1.SelectedIndex;
@@ -78,28 +87,32 @@ namespace lab_2
             }
             else
             {
-                MessageBox.Show("Недопустимое значение имени, фамилии или города");
+                Win32.MessageBox(0, "Недопустимое значение имени, фамилии или города.", "Ошибка!", 0);
                 return;
             }
         }
 
+        //Кнопка вызова ошибки OutOfMemoryException
         private void CreateException_Click(object sender, EventArgs e)
         {
             try
             {
                 OutOfMemoryException();
             }
-            catch (StackOverflowException ex)
+            catch (OutOfMemoryException ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+       
 
+        //Функция, вызывающая ошибку OutOfMemoryException
         private void OutOfMemoryException()
         {
-            throw new StackOverflowException("Ты вызвал OutOfMemoryException");
+            throw new OutOfMemoryException("Ты вызвал OutOfMemoryException");
         }
 
+        //Кнопка просмотреть информацию об объекте
         private void SeeObject_Click(object sender, EventArgs e)
         {
             int selected = comboBox1.SelectedIndex;
@@ -108,13 +121,23 @@ namespace lab_2
             ChangeComboBox1();
         }
 
+        /// <summary>
+        /// Проверка на корректность полей с помощью регулярного выражения
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private bool isString(string input)
         {
             string pattern = @"^\p{IsCyrillic}+\s*\p{IsCyrillic}*$";
             Match match = Regex.Match(input, pattern);
             return match.Success;
         }
-
+        
+        /// <summary>
+        /// Проверка значения строки
+        /// </summary>
+        /// <param name="newString"></param>
+        /// <returns></returns>
         bool exeminationString(string newString)
         {
             bool flag = true;
@@ -123,7 +146,7 @@ namespace lab_2
                 if (!(isString(newString)))
                 {
                     flag = false;
-                    MessageBox.Show("Введено некорректное поле");
+                    Win32.MessageBox(0, "Введено некорректное поле.", "Ошибка!", 0);
                 }
             }
             return flag;
